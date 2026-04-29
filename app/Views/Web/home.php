@@ -1,5 +1,5 @@
 <?= $this->layout("app", [
-        "title" => $title
+            "title" => $title
 ]) ?>
 
 <!-- Hero Section -->
