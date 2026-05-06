@@ -2,6 +2,8 @@
 
 namespace App\Core;
 
+use App\Models\Role\RolePermission;
+
 class Auth
 {
     public static function user()
@@ -20,6 +22,27 @@ class Auth
         $user = self::user();
         return $user->role ?? null;
     }
+    public static function roleId(): ?int
+    {
+        $user = self::user();
+        return isset($user->role_id) ? (int) $user->role_id : null;
+    }
+
+    public static function hasPermission(string $permission): bool
+    {
+        $roleId = self::roleId();
+
+        if (!$roleId) {
+            return false;
+        }
+
+        return RolePermission::userHasPermission($roleId, $permission);
+    }
+    public static function logout(): void
+    {
+        $session = new Session();
+        $session->unset('auth');
+    }
 
     public static function requireLogin(): void
     {
@@ -36,6 +59,16 @@ class Auth
         if (self::role() !== $role) {
             Message::error("Você não tem autorizdo a essa página.");
             redirect("/entrar");
+        }
+    }
+    public static function requirePermission(string $permission): void
+    {
+        self::requireLogin();
+
+        if (!self::hasPermission($permission)) {
+            Message::error("Você não tem autorização para acessar esta página.");
+            redirect("/erro/403");
+            return;
         }
     }
 }
