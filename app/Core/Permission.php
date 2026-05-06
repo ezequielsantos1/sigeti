@@ -10,7 +10,7 @@ final class Permission
     public const VIEM_ALL_TICKET = 'ver_todos_chamados';
     public const COMENT_TICKET = 'comentar_chamado';
     public const ATTACH_FILE_TICKET = 'anexar_arquivo_chamado';
-    public const CONFIRM_RESOLUTION = 'confirmar_resoluao';
+    public const CONFIRM_RESOLUTION = 'confirmar_resolucao';
     public const REOPEN_TICKET = 'reabrir_chamado';
     public const ASSIGN_TICKET = 'atribuir_chamado';
     public const TAKE_TICKET = 'assumir_chamado';
