@@ -7,7 +7,7 @@ final class Permission
     //Chamados
     public const OPEN_TICKET = 'abrir_chamado';
     public const VIEW_MY_TICKET = 'ver_meus_chamados';
-    public const VIEM_ALL_TICKET = 'ver_todos_chamados';
+    public const VIEW_ALL_TICKET = 'ver_todos_chamados';
     public const COMENT_TICKET = 'comentar_chamado';
     public const ATTACH_FILE_TICKET = 'anexar_arquivo_chamado';
     public const CONFIRM_RESOLUTION = 'confirmar_resolucao';
