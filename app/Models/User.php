@@ -32,6 +32,8 @@ class User extends AbstractModel
     ];
     protected bool $timestamps = true;
 
+    protected bool $softDelete = true;
+
     public function getId(): ?int
     {
         return $this->attributes["id"];
