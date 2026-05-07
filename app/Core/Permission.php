@@ -73,9 +73,9 @@ final class Permission
 
     //Escolas
     public const VIEW_SCHOOLS = 'ver_escolas';
-    public const CREATE_SCHOLAR = 'criar_escola';
-    public const EDIT_SCHOLAR = 'editar_escola';
-    public const DELETE_SCHOLAR = 'excluir_escola';
+    public const CREATE_SCHOOL = 'criar_escola';
+    public const EDIT_SCHOOL = 'editar_escola';
+    public const DELETE_SCHOOL = 'excluir_escola';
 
     //Perfil pessoal
     public const EDIT_OWN_PROFILE = 'editar_proprio_perfil';
