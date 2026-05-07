@@ -5,6 +5,7 @@ namespace App\Controllers\Teacher;
 use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Message;
+use App\Core\Permission;
 use App\Models\Category;
 use App\Models\School;
 use App\Models\SchoolUser;
@@ -17,7 +18,7 @@ class TicketController extends Controller
     {
         parent::__construct("App");
 
-        Auth::requireRole(User::TEACHER);
+        Auth::requirePermission(Permission::OPEN_TICKET);
     }
 
     public function index(): void
