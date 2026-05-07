@@ -5,6 +5,7 @@ namespace App\Controllers\Teacher;
 use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Message;
+use App\Core\Permission;
 use App\Models\Ticket;
 use App\Models\TicketComment;
 
@@ -13,6 +14,8 @@ class TicketCommentController extends Controller
     public function __construct()
     {
         parent::__construct("App");
+
+        Auth::requirePermission(Permission::COMENT_TICKET);
     }
 
     public function index(?array $data):void
