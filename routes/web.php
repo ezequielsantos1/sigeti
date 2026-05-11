@@ -96,6 +96,10 @@ $router->post("/chamados/cadastrar", "Teacher\\TicketController@store");
 
 
 
+require  __DIR__ . "/admin.php";
+
+
+
 
 $router->group(null);
 $router->get("/erro/{errorCode}", "ErrorController@index");

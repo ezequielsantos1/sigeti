@@ -1,8 +1,6 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Rotas de Alteticaçao
-|--------------------------------------------------------------------------
-*/
-$router->get("/dashboard", "DashboardController@index");
+$router->group(null);
+$router->group("/admin");
+
+$router->get("/dashboard", "Admin\DashboardController@index");
