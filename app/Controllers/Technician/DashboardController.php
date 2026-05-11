@@ -5,8 +5,7 @@ namespace App\Controllers\Technician;
 use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Permission;
-use App\Models\Ticket;
-use App\Models\User;
+use App\Models\Ticket\Ticket;
 
 class DashboardController extends Controller
 {
@@ -23,9 +22,9 @@ class DashboardController extends Controller
         $ticketsModel = new Ticket();
         $tickets = (new Ticket())->ticketsOrderedByStatusPriorityAndOpeningDate();
 
-        $quantityTicketsByMonth = $ticketsModel->countTicketsByMonth(2024);
-        $quantityTicketsByCategory = $ticketsModel->countTicketsByCategory(2024);
-        $quantityTicketsByStatus = $ticketsModel->countTicketsByStatus(2024);
+        $quantityTicketsByMonth = $ticketsModel->countTicketsByMonth(null, 2024);
+        $quantityTicketsByCategory = $ticketsModel->countTicketsByCategory(null, 2024);
+        $quantityTicketsByStatus = $ticketsModel->countTicketsByStatus(null, 2024);
 
         $avgResolutionDays = $ticketsModel->avgResolutionDaysByMonthCurrentYear(2024);
         $ticketsByPriorityAndStatus = $ticketsModel->countByPriorityAndStatusCurrentYear(2024);

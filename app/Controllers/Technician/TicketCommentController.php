@@ -6,9 +6,8 @@ use App\Core\Auth;
 use App\Core\Controller;
 use App\Core\Message;
 use App\Core\Permission;
-use App\Models\Ticket;
-use App\Models\TicketComment;
-use App\Models\User;
+use App\Models\Ticket\Ticket;
+use App\Models\Ticket\TicketComment;
 
 class TicketCommentController extends Controller
 {

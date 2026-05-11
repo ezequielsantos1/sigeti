@@ -15,11 +15,11 @@ class  DashboardController extends Controller
     {
         parent::__construct("App");
 
-        Auth::requirePermission(Permission::VIEW_USERS);
+        Auth::requirePermission(Permission::VIEW_MANAGER_DASHBOARD);
     }
 
     public function index(): void
     {
-
+        echo $this->view->render('admin/dashboard');
     }
 }

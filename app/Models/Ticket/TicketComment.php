@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Ticket;
 
 use App\Core\AbstractModel;
-use mysql_xdevapi\Result;
+use App\Models\User;
 
 class TicketComment extends AbstractModel
 {

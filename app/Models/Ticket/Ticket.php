@@ -1,8 +1,12 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Ticket;
 
 use App\Core\AbstractModel;
+use App\Models\Category;
+use App\Models\School;
+use App\Models\SchoolUser;
+use App\Models\User;
 
 class Ticket extends AbstractModel
 {
@@ -386,7 +390,7 @@ class Ticket extends AbstractModel
             $sql .= " AND opened_by = :user_id ";
         }
 
-        $sql .= "GROUP BY MONTH(opened_at) ORDER BY MONTH(opened_at);";
+        $sql .= " GROUP BY MONTH(opened_at) ORDER BY MONTH(opened_at);";
 
         $statement = $this->connection->prepare($sql);
         $statement->bindParam(":year", $year, \PDO::PARAM_INT);
