@@ -3,6 +3,7 @@
 namespace App\Models\Role;
 
 use App\Core\AbstractModel;
+use PDO;
 
 class Role extends AbstractModel
 {
@@ -124,6 +125,33 @@ class Role extends AbstractModel
         }
 
         return $errors;
+    }
+
+    public function totalRoles(): int
+    {
+        $sql = "SELECT COUNT(*) FROM {$this->table} 
+                WHERE deleted_at IS NULL";
+
+        $statement = $this->connection->prepare($sql);
+        $statement->execute();
+
+        return $statement->fetchColumn();
+    }
+
+    public function recentRoles(): ?array
+    {
+        $sql = "SELECT * FROM {$this->table} 
+                WHERE deleted_at IS NULL";
+
+        $statement = $this->connection->prepare($sql);
+        $statement->execute();
+        $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $results = [];
+        foreach ($rows as $row){
+            $results[] = static::hydrate($row);
+        }
+
+        return $results;
     }
 
 
