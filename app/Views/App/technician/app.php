@@ -84,6 +84,8 @@
                         </a>
                     </li>
 
+
+
                     <li class="sidebar-item  has-sub <?= ($menuActive ?? '') === 'chamados' ? 'active' : '' ?>">
                         <a href="" class='sidebar-link'>
                             <i class="bi bi-ticket-detailed-fill"></i>
@@ -206,11 +208,12 @@
 <script src="<?= assets_mazer('/assets/extensions/dayjs/dayjs.min.js') ?>"></script>
 <script src="<?= assets_mazer('/assets/extensions/apexcharts/apexcharts.min.js') ?>"></script>
 
+
 <script src="<?= assets('/js/charts/chart-tickets-month.js') ?>"></script>
 <script src="<?= assets('/js/charts/chart-tickets-category.js') ?>"></script>
-<script src="<?= assets('/js/charts/chart-resolution-rate.js') ?>"></script>
 <script src="<?= assets('/js/charts/chart-avg-resolution.js') ?>"></script>
 <script src="<?= assets('/js/charts/chart-tickets-priority.js') ?>"></script>
+
 
 <script src="<?= assets_mazer('/assets/extensions/jquery/jquery.min.js') ?>"></script>
 <script src="<?= assets_mazer('/assets/extensions/datatables.net/js/jquery.dataTables.min.js') ?>"></script>
