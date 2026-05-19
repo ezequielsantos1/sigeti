@@ -3,12 +3,12 @@
 namespace App\Models\Role;
 
 use App\Core\AbstractModel;
-use PDO;
 
 class Role extends AbstractModel
 {
-    protected string $table = 'roles';
-    protected string $primaryKey = 'id';
+    protected string $table = "roles";
+    protected string $primaryKey = "id";
+
     protected array $fillable = [
         "name",
         "description",
@@ -16,14 +16,13 @@ class Role extends AbstractModel
     ];
 
     protected array $required = [
-        "name" => "O NOME é obrigatório.",
+        "name" => "O campo NOME é obrigatório.",
     ];
 
     protected bool $timestamps = true;
-
     protected bool $softDelete = true;
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->attributes["id"];
     }
@@ -32,33 +31,30 @@ class Role extends AbstractModel
     {
         $name = trim(strip_tags($name));
 
-        if (strlen($name) < 15) {
-            throw new \InvalidArgumentException("O nome do perfil deve ter pelo menos 5 caracteres.");
+        if (strlen($name) < 3) {
+            throw new \InvalidArgumentException("O nome do perfil deve ter pelo menos 3 caracteres.");
         }
 
-        if (strlen($name) > 50) {
-            throw new \InvalidArgumentException("O nome do perfil deve ter até 50 caracteres.");
+        if (strlen($name) > 100) {
+            throw new \InvalidArgumentException("O nome do perfil deve ter no máximo 100 caracteres.");
         }
 
         $this->attributes["name"] = $name;
     }
 
-    public function getName(): ?string
+    public function getName(): string
     {
         return $this->attributes["name"];
     }
 
-    public function setDescription(string $description): void
+    public function setDescription(?string $description): void
     {
-        $description = trim(strip_tags($description));
+        if ($description !== null) {
+            $description = trim(strip_tags($description));
 
-        if (strlen($description) < 20) {
-            throw new \InvalidArgumentException("A descrição deve ter pelo menos de 20 caracteres!");
-        }
-
-        if (strlen($description) > 150) {
-            throw new \InvalidArgumentException("A descrição deve ter até 100 caracteres!");
-
+            if (strlen($description) > 255) {
+                throw new \InvalidArgumentException("A descrição deve ter no máximo 255 caracteres.");
+            }
         }
 
         $this->attributes["description"] = $description;
@@ -66,10 +62,10 @@ class Role extends AbstractModel
 
     public function getDescription(): ?string
     {
-        return $this->attributes["description"];
+        return $this->attributes["description"] ?? null;
     }
 
-    public function setIsProtected(bool $isProtected)
+    public function setIsProtected(bool $isProtected): void
     {
         $this->attributes["is_protected"] = $isProtected ? 1 : 0;
     }
@@ -127,32 +123,17 @@ class Role extends AbstractModel
         return $errors;
     }
 
-    public function totalRoles(): int
+    public function totalRoles(): ?int
     {
-        $sql = "SELECT COUNT(*) FROM {$this->table} 
-                WHERE deleted_at IS NULL";
-
-        $statement = $this->connection->prepare($sql);
-        $statement->execute();
-
-        return $statement->fetchColumn();
+        return (new static())
+            ->count();
     }
 
-    public function recentRoles(): ?array
+    public function recentlyCreatedAndNonDeletedRoles(): ?array
     {
-        $sql = "SELECT * FROM {$this->table} 
-                WHERE deleted_at IS NULL";
-
-        $statement = $this->connection->prepare($sql);
-        $statement->execute();
-        $rows = $statement->fetchAll(PDO::FETCH_ASSOC);
-        $results = [];
-        foreach ($rows as $row){
-            $results[] = static::hydrate($row);
-        }
-
-        return $results;
+        return (new static())
+            ->orderBy("created_at", "DESC")
+            ->limit(5)
+            ->get();
     }
-
-
 }

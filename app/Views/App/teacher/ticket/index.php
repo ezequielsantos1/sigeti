@@ -1,5 +1,5 @@
 <?= $this->layout('teacher/app', [
-        'title' => $title ?? "Professor | Chamados - " . APP_NAME,
+        'title' => $title ?? "Solicitante | Chamados - " . APP_NAME,
         'menuActive' => 'chamados',
         'submenuActive' => 'todos',
 ]) ?>
@@ -50,8 +50,8 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Título</th>
-                                    <th>Escola</th>
-                                    <th>Professor</th>
+                                    <th>Departamento</th>
+                                    <th>Solicitante</th>
                                     <th>Técnico</th>
                                     <th>Prioridade</th>
                                     <th>Status</th>
@@ -70,7 +70,7 @@
                                             </td>
                                             <td>
                                                 <i class="bi bi-building text-muted me-1"></i>
-                                                <?= htmlspecialchars($ticket->school()?->getName() ?? '—') ?>
+                                                <?= htmlspecialchars($ticket->department()?->getName() ?? '—') ?>
                                             </td>
                                             <td>
                                                 <i class="bi bi-person-fill text-muted me-1"></i>

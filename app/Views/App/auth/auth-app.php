@@ -24,8 +24,7 @@
         <div class="col-lg-5 col-12">
             <div id="auth-left">
                 <div class="auth-logo">
-                    <a href="<?= url('/') ?>"><img src="<?= assets_mazer('/assets/compiled/svg/logo.svg') ?>"
-                                                   alt="Logo"></a>
+                    <a href=""><img src="<?= assets_mazer('/assets/compiled/svg/logo.svg') ?>" alt="Logo"></a>
                 </div>
 
                 <?= $this->section('content') ?>

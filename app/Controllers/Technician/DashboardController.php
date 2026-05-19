@@ -9,34 +9,24 @@ use App\Models\Ticket\Ticket;
 
 class DashboardController extends Controller
 {
-
     public function __construct()
     {
         parent::__construct("App");
-
         Auth::requirePermission(Permission::VIEW_TECHNICIAN_DASHBOARD);
     }
 
     public function index(): void
     {
-        $ticketsModel = new Ticket();
-        $tickets = (new Ticket())->ticketsOrderedByStatusPriorityAndOpeningDate();
-
-        $quantityTicketsByMonth = $ticketsModel->countTicketsByMonth(null, 2024);
-        $quantityTicketsByCategory = $ticketsModel->countTicketsByCategory(null, 2024);
-        $quantityTicketsByStatus = $ticketsModel->countTicketsByStatus(null, 2024);
-
-        $avgResolutionDays = $ticketsModel->avgResolutionDaysByMonthCurrentYear(2024);
-        $ticketsByPriorityAndStatus = $ticketsModel->countByPriorityAndStatusCurrentYear(2024);
+        $ticketModel = new Ticket();
 
         echo $this->view->render("technician/dashboard", [
-            "tickets" => $tickets,
-            "quantityTicketsByMonth" => $quantityTicketsByMonth,
-            "quantityTicketsByCategory" => $quantityTicketsByCategory,
-            "quantityTicketsByStatus" => $quantityTicketsByStatus,
-
-            "avgResolutionDays" => $avgResolutionDays,
-            "ticketsByPriorityAndStatus" => $ticketsByPriorityAndStatus
+            "tickets" => $ticketModel->allOrdered(),
+            "quantityTicketsByStatus" => $ticketModel->countByStatusCurrentYear(),
+            "quantityTicketsByMonth" => $ticketModel->countByMonthCurrentYear(),
+            "quantityTicketsByCategory" => $ticketModel->countByCategoryCurrentYear(),
+            "resolutionRate" => $ticketModel->resolutionRateCurrentYear(),
+            "avgResolutionDays" => $ticketModel->avgResolutionDaysByMonthCurrentYear(),
+            "ticketsByPriorityAndStatus" => $ticketModel->countByPriorityAndStatusCurrentYear(),
         ]);
     }
 }

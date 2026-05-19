@@ -71,7 +71,7 @@
             <img src="<?= assets_flex_start('/assets/img/logo.png') ?>" alt="SIGETI" class="sg-logo-img">
             <div class="sg-logo-text">
                 <span class="sg-logo-name">SIGETI</span>
-                <span class="sg-logo-sub">Sistema de Chamados</span>
+                <span class="sg-logo-sub">Gestão de TI</span>
             </div>
         </a>
 

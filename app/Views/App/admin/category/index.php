@@ -1,5 +1,5 @@
-<?= $this->layout('technician/app', [
-        'title' => $title ?? "Técnico | Categorias - " . APP_NAME,
+<?= $this->layout('admin/app', [
+        'title' => $title ?? "Administrador | Categorias - " . APP_NAME,
         'menuActive' => 'categorias',
         'submenuActive' => 'todos',
 ]) ?>
@@ -20,7 +20,7 @@
                 <div class="col-12 col-md-6 order-md-2 order-first">
                     <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?= url('/tecnico/dashboard') ?>">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="<?= url('/admin/dashboard') ?>">Dashboard</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Categorias</li>
                         </ol>
                     </nav>
@@ -38,7 +38,7 @@
                             <i class="bi bi-tag-fill me-2"></i>
                             Todas as Categorias
                         </h5>
-                        <a href="<?= url('/tecnico/categorias/cadastrar') ?>" class="btn btn-primary btn-sm">
+                        <a href="<?= url('/admin/categorias/cadastrar') ?>" class="btn btn-primary btn-sm">
                             <i class="bi bi-plus-circle-fill me-1"></i>
                             Nova Categoria
                         </a>
@@ -67,16 +67,19 @@
                                                 <?= htmlspecialchars($category->getDescription()) ?>
                                             </td>
                                             <td>
-                                                <a href="<?= url('/tecnico/categorias/editar/' . $category->getId()) ?>"
-                                                   class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-pencil-fill"></i> Editar
+                                                <a href="<?= url('/admin/categorias/editar/' . $category->getId()) ?>"
+                                                   class="btn btn-sm btn-warning"
+                                                   title="Editar">
+                                                    <i class="bi bi-pencil-fill"></i>
+                                                    <span class="d-none d-xl-inline ms-1">Editar</span>
                                                 </a>
 
                                                 <!-- Botão que abre o modal -->
                                                 <button type="button" class="btn btn-sm btn-danger"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#modalExcluir<?= $category->getId() ?>">
-                                                    <i class="bi bi-trash-fill"></i> Excluir
+                                                    <i class="bi bi-trash-fill"></i>
+                                                    <span class="d-none d-xl-inline ms-1">Excluir</span>
                                                 </button>
 
                                                 <!-- Modal Excluir -->
@@ -111,7 +114,7 @@
                                                                     <i class="bx bx-x d-block d-sm-none"></i>
                                                                     <span class="d-none d-sm-block">Cancelar</span>
                                                                 </button>
-                                                                <form action="<?= url('/tecnico/categorias/excluir/' . $category->getId()) ?>"
+                                                                <form action="<?= url('/admin/categorias/excluir/' . $category->getId()) ?>"
                                                                       method="POST" class="d-inline">
 
                                                                     <?= csrf_input() ?>
@@ -135,7 +138,7 @@
                                         <td colspan="5" class="text-center text-muted fst-italic py-4">
                                             <i class="bi bi-inbox-fill me-2"></i>
                                             Nenhuma categoria cadastrada ainda.
-                                            <a href="<?= url('/tecnico/categorias/cadastrar') ?>">Criar a primeira</a>
+                                            <a href="<?= url('/admin/categorias/cadastrar') ?>">Criar a primeira</a>
                                         </td>
                                     </tr>
                                 <?php endif; ?>

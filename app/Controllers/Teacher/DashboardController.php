@@ -18,21 +18,21 @@ class DashboardController extends Controller
 
     public function index(): void
     {
-        $ticketsModel = new Ticket();
+        Auth::requirePermission(Permission::VIEW_REQUESTER_DASHBOARD);
+
+        $ticketModel = new Ticket();
         $userId = Auth::user()->id;
 
-        $tickets = (new Ticket())->ticketsOrderedByStatusPriorityAndOpeningDateByUser(Auth::user()->id);
-
-        $quantityTicketsByStatus = $ticketsModel->countTicketsByStatus($userId);
-        $quantityTicketsByMonth = $ticketsModel->countTicketsByMonth($userId);
-        $quantityTicketsByCategory = $ticketsModel->countTicketsByCategory($userId);
+        $tickets = $ticketModel->ticketsOrderedByStatusPriorityAndOpeningDateByUser(Auth::user()->id);
+        $quantityTicketsByStatus = $ticketModel->countTicketsByStatus($userId);
+        $quantityTicketsByMonth = $ticketModel->countTicketsByMonth($userId);
+        $quantityTicketsByCategory = $ticketModel->countTicketsByCategory($userId);
 
         echo $this->view->render("teacher/dashboard", [
             "tickets" => $tickets,
             "quantityTicketsByStatus" => $quantityTicketsByStatus,
             "quantityTicketsByMonth" => $quantityTicketsByMonth,
             "quantityTicketsByCategory" => $quantityTicketsByCategory,
-
         ]);
     }
 }

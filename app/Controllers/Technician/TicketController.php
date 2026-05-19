@@ -7,7 +7,7 @@ use App\Core\Controller;
 use App\Core\Message;
 use App\Core\Permission;
 use App\Models\Category;
-use App\Models\School;
+use App\Models\Department\Department;
 use App\Models\Ticket\Ticket;
 use App\Models\User;
 
@@ -16,18 +16,13 @@ class TicketController extends Controller
     public function __construct()
     {
         parent::__construct("App");
-
-        Auth::requirePermission(Permission::VIEW_ALL_TICKET);
+        Auth::requirePermission(Permission::VIEW_ALL_TICKETS);
     }
 
     public function index(): void
     {
-        $ticketsModel = new Ticket();
-
-        $tickets = (new Ticket())->ticketsOrderedByStatusPriorityAndOpeningDate();
-
         echo $this->view->render("technician/ticket/index", [
-            "tickets" => $tickets,
+            "tickets" => (new Ticket())->allOrdered()
         ]);
 
         clear_old();
@@ -37,15 +32,10 @@ class TicketController extends Controller
     {
         Auth::requirePermission(Permission::OPEN_TICKET);
 
-        $schools = School::all();
-        $categories = Category::all();
-        $teachers = User::usersByRole(User::TEACHER);
-
-
         echo $this->view->render("technician/ticket/create", [
-            "schools" => $schools,
-            "categories" => $categories,
-            "teachers" => $teachers
+            "departments" => (new Department())->orderBy('name','ASC')->get(),
+            "categories" => Category::all(),
+            "users" => User::all(),
         ]);
 
         clear_old();
@@ -55,9 +45,9 @@ class TicketController extends Controller
     {
         Auth::requirePermission(Permission::OPEN_TICKET);
 
-        $this->validateCsrfToken($data, "tecnico/chamados/cadastrar");
-        $data['status'] = Permission::OPEN_TICKET;
+        $this->validateCsrfToken($data, "/tecnico/chamados/cadastrar");
 
+        $data["status"] = Ticket::OPEN;
         $newTicket = new Ticket();
 
         $errors = array_merge(
@@ -70,7 +60,6 @@ class TicketController extends Controller
             foreach ($errors as $error) {
                 Message::warning($error);
             }
-
             redirect("/tecnico/chamados/cadastrar");
             return;
         }
@@ -79,25 +68,22 @@ class TicketController extends Controller
             $newTicket->fill([
                 "title" => $data["title"],
                 "description" => $data["description"],
-                "school_id" => $data["school_id"],
+                "department_id" => $data["department_id"],
                 "category_id" => $data["category_id"],
                 "opened_by" => $data["opened_by"],
                 "status" => $data["status"],
-                "priority" => $data["priority"]
+                "priority" => $data["priority"],
             ]);
-
             $newTicket->setOpenedAt();
             $newTicket->save();
-
         } catch (\InvalidArgumentException $invalidArgumentException) {
             Message::error($invalidArgumentException->getMessage());
             redirect("/tecnico/chamados/cadastrar");
             return;
         }
 
-        Message::success("Chamado cadastrado com sucesso!");
+        Message::success("Chamado cadastrado com sucesso.");
         redirect("/tecnico/chamados/editar/" . $newTicket->getId());
-
     }
 
     public function edit(?array $data): void
@@ -107,75 +93,120 @@ class TicketController extends Controller
         $ticket = Ticket::find($data["id"]);
 
         if (!$ticket) {
-            Message::error("Chamado não encontrado");
-            redirect("/tecnico/chamados/cadastrar");
+            Message::warning("Chamado não encontrado ou não existe.");
+            redirect("/tecnico/chamados");
             return;
         }
 
-        $technicians = User::usersByRole(User::TECHNICIAN);
-
         echo $this->view->render("technician/ticket/edit", [
             "ticket" => $ticket,
-            "technicians" => $technicians,
+            "departments" => Department::all(),
+            "categories" => Category::all(),
+            "technicians" => User::usersByPermission(Permission::TAKE_TICKET)
         ]);
+
+        clear_old();
     }
 
     public function update(?array $data): void
     {
+        Auth::requirePermission(Permission::EDIT_TICKET);
 
-        $this->validateCsrfToken($data, "tecnico/chamados/editar/" . $data["id"]);
+        $this->validateCsrfToken($data, "/tecnico/chamados/editar/" . $data["id"]);
 
-        $ticketId = $data["id"];
-
-        $ticket = Ticket::find($ticketId);
+        $ticket = Ticket::find((int)$data["id"]);
 
         if (!$ticket) {
-            Message::warning("Chamado não encontrado ou não existe");
-            redirect("/tecnico/chamados/editar/" . $ticketId);
+            Message::warning("Chamado não encontrado ou não existe.");
+            redirect("/tecnico/chamados");
             return;
         }
 
-        //Verificaçao do tecnico
-        $errors = array_merge(
-            $ticket->validateTechnician($data),
-            $ticket->validateStatusTransition($data['status'])
-        );
+        $newStatus = $data["status"] ?? $ticket->getStatus();
+        $errors = $ticket->validateStatusTransition($newStatus);
 
         if ($errors) {
             flash_old($data);
-
             foreach ($errors as $error) {
                 Message::warning($error);
             }
-
             redirect("/tecnico/chamados/editar/" . $ticket->getId());
             return;
         }
 
         try {
             $ticket->fill([
-                "status" => $data["status"],
-                "priority" => $data["priority"]
+                "status" => $newStatus,
+                "priority" => $data["priority"] ?? $ticket->getPriority(),
             ]);
 
-            if (!empty($data['assigned_to'])){
-                $ticket->setAssignedTo($data['assigned_to']);
+            if (!empty($data["assigned_to"])) {
+                $ticket->setAssignedTo((int)$data["assigned_to"]);
             }
 
-            if (in_array($data['status'], [Ticket::FINISHED, Ticket::ARCHIVED], true)) {
+            if (in_array($newStatus, [Ticket::FINISHED, Ticket::ARCHIVED], true)) {
                 $ticket->setClosedAt();
             }
 
             $ticket->save();
-
         } catch (\InvalidArgumentException $invalidArgumentException) {
             Message::error($invalidArgumentException->getMessage());
             redirect("/tecnico/chamados/editar/" . $ticket->getId());
             return;
-        };
+        }
 
-        Message::success("Chamado editado com sucesso!");
+        Message::success("Chamado atualizado com sucesso.");
         redirect("/tecnico/chamados/editar/" . $ticket->getId());
+    }
 
+    public function destroy(?array $data): void
+    {
+        Auth::requirePermission(Permission::DELETE_TICKET);
+
+        $this->validateCsrfToken($data, "/tecnico/chamados");
+
+        $ticket = Ticket::find((int)$data["id"]);
+
+        if (!$ticket) {
+            Message::warning("Chamado não encontrado ou não existe.");
+            redirect("/tecnico/chamados");
+            return;
+        }
+
+        if ($ticket->existsComments()) {
+            Message::warning("Este chamado possui comentários vinculados e não pode ser excluído.");
+            redirect("/tecnico/chamados");
+            return;
+        }
+
+        $blockDelete = [
+            Ticket::IN_PROGRESS,
+            Ticket::WAITING,
+            Ticket::RESOLVED,
+            Ticket::FINISHED,
+        ];
+
+        if (in_array($ticket->getStatus(), $blockDelete, true)) {
+            $labels = [
+                Ticket::IN_PROGRESS => "Em Andamento",
+                Ticket::WAITING => "Aguardando",
+                Ticket::RESOLVED => "Resolvido",
+                Ticket::FINISHED => "Finalizado",
+            ];
+            Message::warning("Chamados com status '{$labels[$ticket->getStatus()]}' não podem ser excluídos.");
+            redirect("/tecnico/chamados");
+            return;
+        }
+
+        try {
+            $ticket->delete();
+        } catch (\InvalidArgumentException $invalidArgumentException) {
+            Message::error($invalidArgumentException->getMessage());
+            redirect("/tecnico/chamados");
+            return;
+        }
+
+        Message::success("Chamado excluído em segurança com sucesso.");
+        redirect("/tecnico/chamados");
     }
 }

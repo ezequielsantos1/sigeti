@@ -1,5 +1,5 @@
-<?= $this->layout('technician/app', [
-        'title' => $title ?? "Técnico | Usuários - " . APP_NAME,
+<?= $this->layout('admin/app', [
+        'title' => $title ?? "Admin | Usuários - " . APP_NAME,
         'menuActive' => 'usuarios',
         'submenuActive' => 'todos',
 ]) ?>
@@ -10,6 +10,7 @@
             <i class="bi bi-justify fs-3"></i>
         </a>
     </header>
+
     <div class="page-heading">
         <div class="page-title">
             <div class="row">
@@ -20,7 +21,7 @@
                 <div class="col-12 col-md-6 order-md-2 order-first">
                     <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?= url('/tecnico/dashboard') ?>">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="<?= url('/admin/dashboard') ?>">Dashboard</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Usuários</li>
                         </ol>
                     </nav>
@@ -38,7 +39,7 @@
                             <i class="bi bi-people-fill me-2"></i>
                             Todos os Usuários
                         </h5>
-                        <a href="<?= url('/tecnico/usuarios/cadastrar') ?>" class="btn btn-primary btn-sm">
+                        <a href="<?= url('/admin/usuarios/cadastrar') ?>" class="btn btn-primary btn-sm">
                             <i class="bi bi-person-plus-fill me-1"></i>
                             Novo Usuário
                         </a>
@@ -53,7 +54,6 @@
                                     <th>Email</th>
                                     <th>Perfil</th>
                                     <th>Status</th>
-                                    <th>Escolas</th>
                                     <th>Último Acesso</th>
                                     <th>Ações</th>
                                 </tr>
@@ -72,42 +72,18 @@
                                                 <?= htmlspecialchars($user->getEmail()) ?>
                                             </td>
                                             <td>
-                                                <?php if ($user->getRole() === \App\Models\User::TECHNICIAN): ?>
-                                                    <span class="badge bg-primary">Técnico</span>
-                                                <?php else: ?>
-                                                    <span class="badge bg-success">Professor</span>
-                                                <?php endif; ?>
+                                                <span class="badge bg-primary">
+                                                    <?= htmlspecialchars($user->role()?->getName() ?? '—') ?>
+                                                </span>
                                             </td>
                                             <td>
-                                                <?php $status = $user->getStatus(); ?>
-                                                <?php if ($status === \App\Models\User::ACTIVE): ?>
+                                                <?php if ($user->getStatus() === \App\Models\User::ACTIVE): ?>
                                                     <span class="badge bg-success">Ativo</span>
-                                                <?php elseif ($status === \App\Models\User::INACTIVE): ?>
+                                                <?php elseif ($user->getStatus() === \App\Models\User::INACTIVE): ?>
                                                     <span class="badge bg-danger">Inativo</span>
                                                 <?php else: ?>
                                                     <span class="badge bg-warning">Registrado</span>
                                                 <?php endif; ?>
-                                            </td>
-                                            <td>
-                                                <?php
-                                                $links = $user->schoolUserLinks();
-                                                if (empty($links)) {
-                                                    echo '<span class="text-muted fst-italic">—</span>';
-                                                } else {
-                                                    foreach ($links as $link) {
-                                                        $school = $link->school();
-                                                        if ($school) {
-                                                            $shift = match ($link->getShift()) {
-                                                                'manha' => 'Manhã',
-                                                                'tarde' => 'Tarde',
-                                                                'integral' => 'Integral',
-                                                                default => $link->getShift()
-                                                            };
-                                                            echo '<small class="d-block"><i class="bi bi-building me-1"></i>' . htmlspecialchars($school->getName()) . ' <span class="text-muted">(' . $shift . ')</span></small>';
-                                                        }
-                                                    }
-                                                }
-                                                ?>
                                             </td>
                                             <td>
                                                 <small class="text-muted">
@@ -117,22 +93,22 @@
                                                 </small>
                                             </td>
                                             <td>
-                                                <a href="<?= url('/tecnico/usuarios/editar/' . $user->getId()) ?>"
+                                                <a href="<?= url('/admin/usuarios/editar/' . $user->getId()) ?>"
                                                    class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-pencil-fill"></i> Editar
+                                                    <i class="bi bi-pencil-fill"></i>
+                                                    <span class="d-none d-xl-inline ms-1">Editar</span>
                                                 </a>
                                                 <button type="button" class="btn btn-sm btn-danger"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#modalExcluir<?= $user->getId() ?>">
-                                                    <i class="bi bi-trash-fill"></i> Excluir
+                                                    <i class="bi bi-trash-fill"></i>
+                                                    <span class="d-none d-xl-inline ms-1">Excluir</span>
                                                 </button>
 
-                                                <!-- Modal Excluir -->
                                                 <div class="modal fade text-left"
                                                      id="modalExcluir<?= $user->getId() ?>"
                                                      tabindex="-1" role="dialog" aria-hidden="true">
-                                                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"
-                                                         role="document">
+                                                    <div class="modal-dialog modal-dialog-centered" role="document">
                                                         <div class="modal-content">
                                                             <div class="modal-header bg-danger">
                                                                 <h5 class="modal-title white">
@@ -156,7 +132,7 @@
                                                                         data-bs-dismiss="modal">
                                                                     <span class="d-none d-sm-block">Cancelar</span>
                                                                 </button>
-                                                                <form action="<?= url('/tecnico/usuarios/excluir/' . $user->getId()) ?>"
+                                                                <form action="<?= url('/admin/usuarios/excluir/' . $user->getId()) ?>"
                                                                       method="POST" class="d-inline">
                                                                     <?= csrf_input() ?>
                                                                     <input type="hidden" name="_method" value="DELETE">
@@ -173,10 +149,10 @@
                                     <?php endforeach; ?>
                                 <?php else: ?>
                                     <tr>
-                                        <td colspan="8" class="text-center text-muted fst-italic py-4">
+                                        <td colspan="7" class="text-center text-muted fst-italic py-4">
                                             <i class="bi bi-inbox-fill me-2"></i>
                                             Nenhum usuário cadastrado ainda.
-                                            <a href="<?= url('/tecnico/usuarios/cadastrar') ?>">Cadastrar o primeiro</a>
+                                            <a href="<?= url('/admin/usuarios/cadastrar') ?>">Cadastrar o primeiro</a>
                                         </td>
                                     </tr>
                                 <?php endif; ?>
