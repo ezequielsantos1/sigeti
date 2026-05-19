@@ -15,36 +15,11 @@ class RolePermissionController extends Controller
     public function __construct()
     {
         parent::__construct("App");
-<<<<<<< HEAD
-
-=======
->>>>>>> f267c2f53651f6cb844f9c2aac6de8b81675f0af
         Auth::requirePermission(Permission::MANAGE_ROLE_PERMISSIONS);
     }
 
     public function edit(?array $data): void
     {
-<<<<<<< HEAD
-        Auth::requirePermission(Permission::EDIT_ROLE);
-
-        $roles = Role::find($data['id']);
-
-        if ($roles) {
-            Message::warning("Esse perfil não existe!");
-            redirect("/admin/perfils");
-            return;
-        }
-
-        $permission = (new PermissionModel())->groupedByGroup();
-
-        $currentPermissions = RolePermission::permissionIdsByRole($roles->getId());
-
-        echo $this->view->render("admin/role/permissions", [
-            "roles" => $roles,
-            "permissions" => $permission,
-            "currentPermissions" => $currentPermissions
-
-=======
         $role = Role::find((int)$data["id"]);
 
         if (!$role) {
@@ -60,7 +35,6 @@ class RolePermissionController extends Controller
             "role" => $role,
             "permissions" => $permissions,
             "currentPermissions" => $currentPermissions,
->>>>>>> f267c2f53651f6cb844f9c2aac6de8b81675f0af
         ]);
 
         clear_old();
@@ -68,55 +42,22 @@ class RolePermissionController extends Controller
 
     public function update(?array $data): void
     {
-<<<<<<< HEAD
-        Auth::requirePermission(Permission::EDIT_ROLE);
-
-        $this->validateCsrfToken($data, "/admin/perfis/permissions");
-
-        $role = Role::find($data['id']);
-        if (!$role) {
-            Message::warning("Perfil não encontrado!");
-=======
         $this->validateCsrfToken($data, "/admin/perfis/" . $data["id"] . "/permissoes");
 
         $role = Role::find((int)$data["id"]);
 
         if (!$role) {
             Message::warning("Perfil não encontrado ou não existe.");
->>>>>>> f267c2f53651f6cb844f9c2aac6de8b81675f0af
             redirect("/admin/perfis");
             return;
         }
 
-<<<<<<< HEAD
-        if ($role->isProtected()){
-            Message::warning("Perfils protegidos não podem ser editados!");
-=======
         if ($role->isProtected()) {
             Message::warning("As permissões deste perfil são protegidas e não podem ser alteradas.");
->>>>>>> f267c2f53651f6cb844f9c2aac6de8b81675f0af
             redirect("/admin/perfis");
             return;
         }
 
-<<<<<<< HEAD
-        $permissionIds = array_map(
-            'intval',
-            $data['permissions'] ?? []
-        );
-
-        try {
-            RolePermission::syncPermissions($role->getId(), $permissionIds);
-
-            Message::success("Perfil atualizado com sucesso!");
-            redirect("/admin/perfis/permissions");
-
-        }catch (\InvalidArgumentException $invalidArgumentException){
-            Message::warning($invalidArgumentException->getMessage());
-            redirect("/admin/perfis/permissions");
-            return;
-        }
-=======
         $permissionIds = array_map('intval', $data["permissions"] ?? []);
 
         try {
@@ -129,6 +70,5 @@ class RolePermissionController extends Controller
 
         Message::success("Permissões atualizadas com sucesso.");
         redirect("/admin/perfis/" . $role->getId() . "/permissoes");
->>>>>>> f267c2f53651f6cb844f9c2aac6de8b81675f0af
     }
 }
