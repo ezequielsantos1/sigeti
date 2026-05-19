@@ -6,16 +6,18 @@ use App\Core\AbstractModel;
 
 class RolePermission extends AbstractModel
 {
-    protected string $table = 'role_permissions';
-    protected string $primaryKey = 'id';
+    protected string $table = "role_permissions";
+
+    protected string $primaryKey = "id";
+
     protected array $fillable = [
         "role_id",
-        "permission_id"
+        "permission_id",
     ];
 
     protected array $required = [
-        "role_id" => "O campo PERFIL é obrigatório.",
-        "permission_id" => "O campo PERMISSÃO é obrigatório."
+        "role_id"       => "O campo PERFIL é obrigatório.",
+        "permission_id" => "O campo PERMISSÃO é obrigatório.",
     ];
 
     protected bool $timestamps = false;
@@ -24,14 +26,15 @@ class RolePermission extends AbstractModel
 
     public function getId(): int
     {
-        return $this->attributes["id"] ;
+        return $this->attributes["id"];
     }
 
     public function setRoleId(int $roleId): void
     {
-        if ($roleId < 1) {
-            throw  new \InvalidArgumentException("O perfil é inválida");
+        if ($roleId <= 0) {
+            throw new \InvalidArgumentException("O perfil informado é inválido.");
         }
+
         $this->attributes["role_id"] = $roleId;
     }
 
@@ -42,25 +45,16 @@ class RolePermission extends AbstractModel
 
     public function setPermissionId(int $permissionId): void
     {
-        if ($permissionId < 1) {
-            throw  new \InvalidArgumentException("A permissão é inválida");
+        if ($permissionId <= 0) {
+            throw new \InvalidArgumentException("A permissão informada é inválida.");
         }
+
         $this->attributes["permission_id"] = $permissionId;
     }
 
     public function getPermissionId(): int
     {
-        return $this->attributes["permission_id"] ;
-    }
-
-    public function role(): ?Role
-    {
-        return Role::find($this->getRoleId());
-    }
-
-    public function permission(): ?Permission
-    {
-        return Permission::find($this->getPermissionId());
+        return $this->attributes["permission_id"];
     }
 
     public static function userHasPermission(int $roleId, string $permission): bool
@@ -117,5 +111,4 @@ class RolePermission extends AbstractModel
 
         return array_column($statement->fetchAll(\PDO::FETCH_ASSOC), "permission_id");
     }
-
 }

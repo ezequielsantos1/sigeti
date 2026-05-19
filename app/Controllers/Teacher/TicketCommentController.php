@@ -7,6 +7,7 @@ use App\Core\Controller;
 use App\Core\Message;
 use App\Core\Permission;
 use App\Models\Ticket\Ticket;
+use App\Models\Ticket\TicketAttachment;
 use App\Models\Ticket\TicketComment;
 
 class TicketCommentController extends Controller
@@ -14,25 +15,32 @@ class TicketCommentController extends Controller
     public function __construct()
     {
         parent::__construct("App");
-
-        Auth::requirePermission(Permission::COMENT_TICKET);
+        Auth::requirePermission(Permission::COMMENT_TICKET);
     }
 
-    public function index(?array $data):void
+    public function index(?array $data): void
     {
-        $ticket = Ticket::find((int)$data['ticket_id']);
+        $ticket = Ticket::find((int)($data["ticket_id"] ?? 0));
 
-        if(!$ticket || $ticket->getOpenedBy() != Auth::user()->id){
-            Message::warning("Chamado não encontrado ou não existe");
+        if (!$ticket) {
+            Message::warning("Chamado não encontrado ou não existe.");
             redirect("/professor/chamados");
             return;
         }
 
-        $comments = TicketComment::commentsByTicketId($data['ticket_id']);
+        if ($ticket->getOpenedBy() !== Auth::user()->id) {
+            Message::warning("Você não tem permissão para ver este chamado.");
+            redirect("/professor/chamados");
+            return;
+        }
+
+        $comments = TicketComment::commentsByTicketId($ticket->getId());
+        $attachments = TicketAttachment::byTicket($ticket->getId());
 
         echo $this->view->render("teacher/ticket/comments", [
+            "ticket" => $ticket,
             "comments" => $comments,
-            "ticket" => $ticket
+            "attachments" => $attachments,
         ]);
 
         clear_old();
@@ -46,18 +54,23 @@ class TicketCommentController extends Controller
 
         $ticket = Ticket::find($ticketId);
 
-        if (!$ticket || $ticket->getOpenedBy() != Auth::user()->id) {
+        if (!$ticket) {
             Message::warning("Chamado não encontrado ou não existe.");
             redirect("/professor/chamados");
             return;
         }
 
-        $comment = new TicketComment();
+        if ($ticket->getOpenedBy() !== Auth::user()->id) {
+            Message::warning("Você não tem permissão para comentar neste chamado.");
+            redirect("/professor/chamados");
+            return;
+        }
 
+        $comment = new TicketComment();
         $payload = [
             "ticket_id" => $ticketId,
             "user_id" => Auth::user()->id,
-            "comment" => $data["comment"],
+            "comment" => $data["comment"] ?? null,
         ];
 
         $errors = array_merge(
@@ -66,13 +79,10 @@ class TicketCommentController extends Controller
         );
 
         if ($errors) {
-
             flash_old($data);
-
             foreach ($errors as $error) {
                 Message::warning($error);
             }
-
             redirect("/professor/chamados/{$ticketId}/comentarios");
             return;
         }
@@ -88,5 +98,5 @@ class TicketCommentController extends Controller
 
         Message::success("Comentário adicionado com sucesso.");
         redirect("/professor/chamados/{$ticketId}/comentarios");
-        }
+    }
 }

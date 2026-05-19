@@ -1,7 +1,7 @@
-<?= $this->layout('technician/app', [
-    "title" => $title ?? "Técnico | Editar Escola - " . APP_NAME,
-    "menuActive" => "escolas",
-    "submenuActive" => "todos",
+<?= $this->layout('admin/app', [
+        "title" => $title ?? "Administrador | Editar Categoria - " . APP_NAME,
+        "menuActive" => "categorias",
+        "submenuActive" => "todos",
 ]) ?>
 
 <div id="main">
@@ -14,14 +14,14 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-12 col-md-6 order-md-1 order-last">
-                    <h3>Editar Escola</h3>
-                    <p class="text-subtitle text-muted">Altere as informações da escola</p>
+                    <h3>Editar Categoria</h3>
+                    <p class="text-subtitle text-muted">Altere as informações da categoria</p>
                 </div>
                 <div class="col-12 col-md-6 order-md-2 order-first">
                     <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?= url('/tecnico/dashboard') ?>">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="<?= url('/tecnico/escolas') ?>">Escolas</a></li>
+                            <li class="breadcrumb-item"><a href="<?= url('/admin/dashboard') ?>">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="<?= url('/admin/categorias') ?>">Categorias</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Editar</li>
                         </ol>
                     </nav>
@@ -38,11 +38,11 @@
                         <div class="card-header">
                             <h4 class="card-title">
                                 <i class="bi bi-pencil-fill me-2"></i>
-                                Editar Escola
+                                Editar Categoria
                             </h4>
                         </div>
                         <div class="card-body">
-                            <form action="<?= url('/tecnico/escolas/editar/' . $school->getId()) ?>" method="post">
+                            <form action="<?= url('/admin/categorias/editar/' . $category->getId()) ?>" method="post">
 
                                 <?= csrf_input() ?>
 
@@ -53,45 +53,28 @@
                                     <label for="name" class="form-label">Nome</label>
                                     <div class="input-group">
                                         <span class="input-group-text">
-                                            <i class="bi bi-building"></i>
+                                            <i class="bi bi-tag-fill"></i>
                                         </span>
                                         <input type="text" name="name" id="name"
                                                class="form-control"
-                                               placeholder="Nome da escola"
-                                               value="<?= old('name', htmlspecialchars($school->getName())) ?>"
+                                               placeholder="Nome da categoria"
+                                               value="<?= old('name', htmlspecialchars($category->getName())) ?>"
                                                required>
                                     </div>
                                 </div>
 
-                                <!-- Código -->
+                                <!-- Descrição -->
                                 <div class="form-group">
-                                    <label for="code" class="form-label">Código</label>
+                                    <label for="description" class="form-label">Descrição</label>
                                     <div class="input-group">
                                         <span class="input-group-text">
-                                            <i class="bi bi-upc"></i>
+                                            <i class="bi bi-card-text"></i>
                                         </span>
-                                        <input type="text" name="code" id="code"
-                                               class="form-control"
-                                               placeholder="Código da escola (8 caracteres)"
-                                               value="<?= old('code', htmlspecialchars($school->getCode()))?>"
-                                               maxlength="8"
-                                               required>
-                                    </div>
-                                    <small class="text-muted">O código deve ter exatamente 8 caracteres.</small>
-                                </div>
-
-                                <!-- Endereço -->
-                                <div class="form-group">
-                                    <label for="address" class="form-label">Endereço</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i class="bi bi-geo-alt-fill"></i>
-                                        </span>
-                                        <input type="text" name="address" id="address"
-                                               class="form-control"
-                                               placeholder="Endereço completo da escola"
-                                               value="<?= old('address', htmlspecialchars($school->getAddress()))?>"
-                                               required>
+                                        <textarea name="description" id="description"
+                                                  class="form-control"
+                                                  placeholder="Descreva a categoria"
+                                                  rows="4"
+                                                  required><?= old('description', htmlspecialchars($category->getDescription())) ?></textarea>
                                     </div>
                                 </div>
 
@@ -101,7 +84,7 @@
                                         <i class="bi bi-check-circle-fill me-1"></i>
                                         Atualizar
                                     </button>
-                                    <a href="<?= url('/tecnico/escolas') ?>" class="btn btn-secondary">
+                                    <a href="<?= url('/admin/categorias') ?>" class="btn btn-secondary">
                                         <i class="bi bi-arrow-left-circle-fill me-1"></i>
                                         Cancelar
                                     </a>

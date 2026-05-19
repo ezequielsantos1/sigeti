@@ -50,8 +50,8 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Título</th>
-                                    <th>Escola</th>
-                                    <th>Professor</th>
+                                    <th>Departamento</th>
+                                    <th>Solicitante</th>
                                     <th>Técnico</th>
                                     <th>Prioridade</th>
                                     <th>Status</th>
@@ -70,7 +70,7 @@
                                             </td>
                                             <td>
                                                 <i class="bi bi-building text-muted me-1"></i>
-                                                <?= htmlspecialchars($ticket->school()?->getName() ?? '—') ?>
+                                                <?= htmlspecialchars($ticket->department()?->getName() ?? '—') ?>
                                             </td>
                                             <td>
                                                 <i class="bi bi-person-fill text-muted me-1"></i>
@@ -118,17 +118,20 @@
                                             <td>
                                                 <a href="<?= url('/tecnico/chamados/editar/' . $ticket->getId()) ?>"
                                                    class="btn btn-sm btn-warning">
-                                                    <i class="bi bi-pencil-fill"></i> Editar
+                                                    <i class="bi bi-pencil-fill"></i>
+                                                    <span class="d-none d-xl-inline ms-1">Editar</span>
                                                 </a>
                                                 <a href="<?= url('/tecnico/chamados/' . $ticket->getId() . '/comentarios') ?>"
                                                    class="btn btn-sm btn-info">
-                                                    <i class="bi bi-chat-dots-fill"></i> Comentar
+                                                    <i class="bi bi-chat-dots-fill"></i>
+                                                    <span class="d-none d-xl-inline ms-1">Comentar</span>
                                                 </a>
                                                 <!-- Botão Excluir -->
                                                 <button type="button" class="btn btn-sm btn-danger"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#modalExcluir<?= $ticket->getId() ?>">
-                                                    <i class="bi bi-trash-fill"></i> Excluir
+                                                    <i class="bi bi-trash-fill"></i>
+                                                    <span class="d-none d-xl-inline ms-1">Excluir</span>
                                                 </button>
                                                 <!-- Modal Excluir -->
                                                 <div class="modal fade text-left"

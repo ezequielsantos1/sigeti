@@ -1,6 +1,6 @@
-<?= $this->layout('technician/app', [
-        "title" => $title ?? "Técnico | Nova Escola - " . APP_NAME,
-        "menuActive" => "escolas",
+<?= $this->layout('admin/app', [
+        "title" => $title ?? "Administrador | Nova Categoria - " . APP_NAME,
+        "menuActive" => "categorias",
         "submenuActive" => "nova",
 ]) ?>
 
@@ -14,14 +14,14 @@
         <div class="page-title">
             <div class="row">
                 <div class="col-12 col-md-6 order-md-1 order-last">
-                    <h3>Nova Escola</h3>
-                    <p class="text-subtitle text-muted">Preencha as informações para cadastrar uma nova escola</p>
+                    <h3>Nova Categoria</h3>
+                    <p class="text-subtitle text-muted">Preencha as informações para criar uma nova categoria</p>
                 </div>
                 <div class="col-12 col-md-6 order-md-2 order-first">
                     <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
                         <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="<?= url('/tecnico/dashboard') ?>">Dashboard</a></li>
-                            <li class="breadcrumb-item"><a href="<?= url('/tecnico/escolas') ?>">Escolas</a></li>
+                            <li class="breadcrumb-item"><a href="<?= url('/admin/dashboard') ?>">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a href="<?= url('/admin/categorias') ?>">Categorias</a></li>
                             <li class="breadcrumb-item active" aria-current="page">Nova</li>
                         </ol>
                     </nav>
@@ -37,12 +37,13 @@
                     <div class="card">
                         <div class="card-header">
                             <h4 class="card-title">
-                                <i class="bi bi-building me-2"></i>
-                                Informações da Escola
+                                <i class="bi bi-tag-fill me-2"></i>
+                                Informações da Categoria
                             </h4>
                         </div>
                         <div class="card-body">
-                            <form action="<?= url('/tecnico/escolas/cadastrar') ?>" method="post">
+
+                            <form action="<?= url('/admin/categorias/cadastrar') ?>" method="post">
 
                                 <?= csrf_input() ?>
 
@@ -51,45 +52,27 @@
                                     <label for="name" class="form-label">Nome</label>
                                     <div class="input-group">
                                         <span class="input-group-text">
-                                            <i class="bi bi-building"></i>
+                                            <i class="bi bi-tag-fill"></i>
                                         </span>
                                         <input type="text" name="name" id="name"
                                                class="form-control"
+                                               placeholder="Nome da categoria"
                                                value="<?= old('name') ?>"
-                                               placeholder="Nome da escola"
                                                required>
                                     </div>
                                 </div>
 
-                                <!-- Código -->
+                                <!-- Descrição -->
                                 <div class="form-group">
-                                    <label for="code" class="form-label">Código</label>
+                                    <label for="description" class="form-label">Descrição</label>
                                     <div class="input-group">
                                         <span class="input-group-text">
-                                            <i class="bi bi-upc"></i>
+                                            <i class="bi bi-card-text"></i>
                                         </span>
-                                        <input type="text" name="code" id="code"
-                                               class="form-control"
-                                               value="<?= old('code') ?>"
-                                               placeholder="Código da escola (8 caracteres)"
-                                               maxlength="8"
-                                               required>
-                                    </div>
-                                    <small class="text-muted">O código deve ter exatamente 8 caracteres.</small>
-                                </div>
-
-                                <!-- Endereço -->
-                                <div class="form-group">
-                                    <label for="address" class="form-label">Endereço</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text">
-                                            <i class="bi bi-geo-alt-fill"></i>
-                                        </span>
-                                        <input type="text" name="address" id="address"
-                                               class="form-control"
-                                               value="<?= old('address') ?>"
-                                               placeholder="Endereço completo da escola"
-                                               required>
+                                        <textarea name="description" id="description"
+                                                  class="form-control"
+                                                  placeholder="Descreva a categoria"
+                                                  rows="4"><?= old('description') ?></textarea>
                                     </div>
                                 </div>
 
@@ -97,9 +80,10 @@
                                 <div class="form-group mt-4 d-flex gap-2">
                                     <button type="submit" class="btn btn-primary">
                                         <i class="bi bi-check-circle-fill me-1"></i>
-                                        Salvar Escola
+                                        Salvar Categoria
                                     </button>
                                 </div>
+
                             </form>
                         </div>
                     </div>
